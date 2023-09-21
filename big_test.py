@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+#
 # From this PR: https://github.com/ArduPilot/pymavlink/pull/503
 
 """
