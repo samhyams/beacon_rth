@@ -136,8 +136,8 @@ message = master.mav.command_long_encode(
         20,       # param2: Accept radius (m)
         0,       # param3: Pass radius (m)
         0,       # param4: (unused)
-        51.12067178,       # param5: Latitude
-        -2.18368379,       # param6: Longitude
+        51.12067178*1e7,       # param5: Latitude
+        -2.18368379*1e7,       # param6: Longitude
         alt      # param7: Altitude (m)
         )
 
