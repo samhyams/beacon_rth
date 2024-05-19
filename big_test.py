@@ -54,6 +54,8 @@ from pymavlink import mavwp
 from pymavlink.mavutil import location
 import datetime
 
+from clrprint import *
+
 __license__ = "GPLv3}"
 
 class ErrorException(Exception):
@@ -1502,11 +1504,11 @@ def main():
     plane.add_waypoint(51.12067178, -2.18868379, ALT)
     # Upload the plan
     plane.send_all_waypoints()
-
     # Set the flight mode
+    clrprint('Setting AUTO', clr='y')
     plane.change_mode('AUTO')
-    print('*****************************',plane.mav.waypoint_current())
-
+    clrprint('AUTO set :)', clr='g')
+    print('***************************** current wp# = ',plane.mav.waypoint_current())
     # Get the current target waypoint info: target.alt, target.lat, larget.lng
     target = plane.get_current_target()
     print(target)
@@ -1523,7 +1525,12 @@ def main():
     plane.change_mode('AUTO')
     print('*****************************',plane.mav.waypoint_current())
     
-                
+    # Get the current target waypoint info: target.alt, target.lat, larget.lng
+    target = plane.get_current_target()
+    print(target)
+
+    # Wait until we approach the target (within 250 m, wait 1000 sec max)
+    plane.wait_location(target, accuracy=250, timeout=1000)
 
 
 if __name__ == "__main__":
