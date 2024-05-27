@@ -2,7 +2,7 @@
 A basic pymavlink implementation for ArduPlane for control of fixed wing mav types.
 
 ## Usage
-Open ArduPlane simulator using mavproxy.
+Open ArduPlane simulator using mavproxy:
 ```
 $ cd ~/ardupilot/ArduPlane/
 $ sim_vehicle.py -v ArduPlane -w --console --map -L patch
