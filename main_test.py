@@ -65,15 +65,8 @@ def new_wp(plane, location, accuracy, speed=25):
     plane.wait_location(target, accuracy=accuracy, timeout=1000)
     clrprint('At WP# = ', plane.mav.waypoint_current(), clr='g')
 
-def main():
-    # Initialise the object
-    plane = Plane()
-
-    # Connect to the specified address
-    print('Attempting connect...')
-    plane.connect('127.0.0.1:5761')
-    print('Connected!')
-    
+def main(plane):
+    # Initialise waypoint list    
     plane.init_wp()
 
     # Get the home location info: home.alt, home.lat, home.lng
@@ -90,7 +83,16 @@ def main():
     clrprint('Finished, actioning RTL default', clr='red')
 
 if __name__ == "__main__":
-    main()
+    # Initialise the object
+    plane = Plane()
+
+    # Connect to the specified address
+    print('Attempting connect...')
+    plane.connect('127.0.0.1:5761')
+    print('Connected!')
+
+    # Main script
+    main(plane)
 
 
 ############## Test zone: bits of functionality that are tested but not currently used, for reference
