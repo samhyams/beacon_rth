@@ -1,7 +1,0 @@
-# Pull most recent changes
-git pull
-
-# Push new commits directly to main
-git add .
-git commit -m 'comment'
-git push origin main
