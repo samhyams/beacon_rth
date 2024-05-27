@@ -1,4 +1,7 @@
 '''
+LIST OF PLANE SUPPORTED COMMANDS:
+https://ardupilot.org/plane/docs/common-mavlink-mission-command-messages-mav_cmd.html#commands-supported-by-plane
+
 to use with mavproxy sitl, navigate to arupilot/ArduPlane and run:
 sim_vehicle.py --console --map
 
@@ -44,14 +47,17 @@ message = master.mav.command_long_encode(
         master.target_component,  # Target component ID
         mavutil.mavlink.MAV_CMD_DO_CHANGE_SPEED,  # ID of command to send
         0,  # Confirmation
-        0,  # param1: Type = 0 (airspeed)
-        speed, # param2: SPeed (m/s)
+        0,  # param1: Type = 0 (airspeed), Type = 1 (groundspeed)
+        speed, # param2: Speed (m/s)
         0,       # param3: Throttle
         0,       # param4 (unused)
         0,       # param5 (unused)
         0,       # param5 (unused)
         0        # param6 (unused)
         )
+
+print('set speed test')
+master.mav.send(message)
 
 
 # NOT SUPPORTED (BY PLANE??)

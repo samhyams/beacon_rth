@@ -17,7 +17,23 @@ WPS = [
 # Counter to see how many waypoints we have commanded
 WP_COUNTER = 0
 
-def new_wp(plane, location, accuracy):
+def set_speed(plane, speed, type=0):
+    '''
+        Set commanded speed of mav
+        Inputs:
+        - plane = Plane object
+        - speed = commanded speed [m/s]
+        - type: 0 = airspeed, 1 = groundspeed
+    '''
+    clrprint('Setting speed = ', speed, ' m/s', clr='y')
+    plane.send_cmd(mavutil.mavlink.MAV_CMD_DO_CHANGE_SPEED,
+                    type,      # param1: Type = 0 (airspeed), Type = 1 (groundspeed)
+                    speed,  # param2: Speed (m/s)
+                    -1,     # param3: Throttle
+                    0, 0, 0, 0, 0  # param4-7: unused
+    )
+
+def new_wp(plane, location, accuracy, speed=25):
     '''
         Creates new flightplan with just home and defined waypoint
         Uploads to mav
@@ -25,6 +41,7 @@ def new_wp(plane, location, accuracy):
         - plane = Plane object
         - location = (lat, lon) tuple
         - accuracy = int of closest approach to WP [m]
+        - speed = commanded airspeed [m/s] (optional, default = 25)
     '''
     clrprint('Adding WP at ', location, clr='y')
     # CLear existing (keep home)
@@ -40,16 +57,15 @@ def new_wp(plane, location, accuracy):
     plane.change_mode('AUTO')
     clrprint('AUTO set :)', clr='g')
     clrprint('Current WP# = ', plane.mav.waypoint_current(), ', Total WPs = ', WP_COUNTER, clr='b')
+    # Set speed
+    set_speed(plane, speed)
     # Get the current target waypoint info: target.alt, target.lat, larget.lng
     target = plane.get_current_target()
-    print(target)
-
     # Wait until we approach the target (within <accuracy> m, wait 1000 sec max)
     plane.wait_location(target, accuracy=accuracy, timeout=1000)
     clrprint('At WP# = ', plane.mav.waypoint_current(), clr='g')
 
 def main():
-
     # Initialise the object
     plane = Plane()
 
@@ -65,10 +81,8 @@ def main():
 
     # Add the first WP and send
     new_wp(plane, WPS[0], 100)
-
     # Add the second WP and send
     new_wp(plane, WPS[1], 100)
-
     # Add the third WP and send
     new_wp(plane, WPS[2], 100)
 
