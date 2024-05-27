@@ -3,14 +3,14 @@ A basic pymavlink implementation for ArduPlane for control of fixed wing mav typ
 
 # Usage
 Open ArduPlane simulator using mavproxy. In ardupilot/Arduplane:
-`$ sim_vehicle.py -v ArduPlane -w --console --map -L patch`
+```$ sim_vehicle.py -v ArduPlane -w --console --map -L patch```
 Then, within the mavproxy terminal window, set the flight mode to takeoff and arm it to start the flight:
 ```
 mode takeoff
 arm throttle
 ```
 The test script is setup to communicate on port 5761, which is not the default, so add the output in the mavproxy terminal:
-`output add 127.0.0.1:5761`
+```output add 127.0.0.1:5761```
 In a separate terminal window, now run the pymavlink script:
 ```
 $ cd ~/beacon_rth/
