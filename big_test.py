@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 #
-# From this PR: https://github.com/ArduPilot/pymavlink/pull/503
+# Modified for Plane use from a Copter example at the PR link below:
+# https://github.com/ArduPilot/pymavlink/pull/503
 
 """
    This program is free software: you can redistribute it and/or modify
@@ -16,26 +17,10 @@
 """
 
 """
-    Pymavlink example usage with ArduPilot Copter SITL.
+    Pymavlink example usage with ArduPilot Plane SITL.
     This expect that the SITL is launch with default parameters.
     You can launch SITL from ArduPilot directory with :
-    sim_vehicle.py -v ArduCopter -w --console --map
-    Then from pymavlink/examples directory, launch this script :
-    python mavexample.py
-    The script will example :
-    - how to connect to the drone
-    - Wait for the drone to be ready
-    - Change some incomming message rate
-    - Get and change parameters
-    - Create and upload an auto mission
-    - Get back the mission in the drone
-    - Run and monitor an auto mission
-    - Make a takeoff in Guided mode
-    - Wait some target altitude
-    - Send some Position target in Guided mode
-    - Monitor the drone position
-    - Trigger a RTL and monitor the progress
-    Those are heavily based on the work done on ArduPilot Autotest framework : https://ardupilot.org/dev/docs/the-ardupilot-autotest-framework.html
+    sim_vehicle.py -v ArduPlane -w --console --map -L patch
 """
 
 import copy
@@ -62,94 +47,76 @@ class ErrorException(Exception):
     """Base class for other exceptions"""
     pass
 
-
 class TimeoutException(ErrorException):
     pass
-
 
 class WaitModeTimeout(TimeoutException):
     """Thrown when fails to achieve given mode change."""
     pass
 
-
 class WaitAltitudeTimout(TimeoutException):
     """Thrown when fails to achieve given altitude range."""
     pass
-
 
 class WaitGroundSpeedTimeout(TimeoutException):
     """Thrown when fails to achieve given ground speed range."""
     pass
 
-
 class WaitRollTimeout(TimeoutException):
     """Thrown when fails to achieve given roll in degrees."""
     pass
-
 
 class WaitPitchTimeout(TimeoutException):
     """Thrown when fails to achieve given pitch in degrees."""
     pass
 
-
 class WaitHeadingTimeout(TimeoutException):
     """Thrown when fails to achieve given heading."""
     pass
-
 
 class WaitDistanceTimeout(TimeoutException):
     """Thrown when fails to attain distance"""
     pass
 
-
 class WaitLocationTimeout(TimeoutException):
     """Thrown when fails to attain location"""
     pass
-
 
 class WaitWaypointTimeout(TimeoutException):
     """Thrown when fails to attain waypoint ranges"""
     pass
 
-
 class SetRCTimeout(TimeoutException):
     """Thrown when fails to send RC commands"""
     pass
-
 
 class MsgRcvTimeoutException(TimeoutException):
     """Thrown when fails to receive an expected message"""
     pass
 
-
 class NotAchievedException(ErrorException):
     """Thrown when fails to achieve a goal"""
     pass
-
 
 class YawSpeedNotAchievedException(NotAchievedException):
     """Thrown when fails to achieve given yaw speed."""
     pass
 
-
 class SpeedVectorNotAchievedException(NotAchievedException):
     """Thrown when fails to achieve given speed vector."""
     pass
-
 
 class PreconditionFailedException(ErrorException):
     """Thrown when a precondition for a test is not met"""
     pass
 
-
 class ArmedAtEndOfTestException(ErrorException):
     """Created when test left vehicle armed"""
     pass
 
-
-class Copter:
-    """ArduPilot Copter class.
-    This class is a generic class that show some example on how to use Pymavlink to connect and control ArduPilot Copter drone.
+class Plane:
+    """ArduPilot Plane class.
+    This class is a generic class that show some example on how to use Pymavlink to connect and control ArduPilot Plane drone.
     This is heavily based on ArduPilot Autotest framework : https://github.com/ArduPilot/ardupilot/tree/master/Tools/autotest. You can find there more utilities functions."""
 
     def __init__(self, default_stream_rate=5, sysid=1):
@@ -184,7 +151,7 @@ class Copter:
     @staticmethod
     def get_distance(loc1, loc2):
         """Get ground distance between two locations."""
-        return Copter.get_distance_accurate(loc1, loc2)
+        return Plane.get_distance_accurate(loc1, loc2)
         # dlat = loc2.lat - loc1.lat
         # try:
         #     dlong = loc2.lng - loc1.lng
@@ -220,23 +187,23 @@ class Copter:
     @staticmethod
     def get_lat_attr(loc):
         """return any found latitude attribute from loc"""
-        return Copter.get_latlon_attr(loc, ["lat", "latitude"])
+        return Plane.get_latlon_attr(loc, ["lat", "latitude"])
 
     @staticmethod
     def get_lon_attr(loc):
         """return any found latitude attribute from loc"""
-        return Copter.get_latlon_attr(loc, ["lng", "lon", "longitude"])
+        return Plane.get_latlon_attr(loc, ["lng", "lon", "longitude"])
 
     @staticmethod
     def get_distance_int(loc1, loc2):
         """Get ground distance between two locations in the normal "int" form
         - lat/lon multiplied by 1e7"""
-        loc1_lat = Copter.get_lat_attr(loc1)
-        loc2_lat = Copter.get_lat_attr(loc2)
-        loc1_lon = Copter.get_lon_attr(loc1)
-        loc2_lon = Copter.get_lon_attr(loc2)
+        loc1_lat = Plane.get_lat_attr(loc1)
+        loc2_lat = Plane.get_lat_attr(loc2)
+        loc1_lon = Plane.get_lon_attr(loc1)
+        loc2_lon = Plane.get_lon_attr(loc2)
 
-        return Copter.get_distance_accurate(
+        return Plane.get_distance_accurate(
             mavutil.location(loc1_lat * 1e-7, loc1_lon * 1e-7),
             mavutil.location(loc2_lat * 1e-7, loc2_lon * 1e-7))
 
@@ -1487,7 +1454,7 @@ def main():
     ALT = 100
 
     # Initialise the object
-    plane = Copter()
+    plane = Plane()
 
     # Connect to the specified address
     print('Attempting connect...')
@@ -1508,7 +1475,7 @@ def main():
     clrprint('Setting AUTO', clr='y')
     plane.change_mode('AUTO')
     clrprint('AUTO set :)', clr='g')
-    print('***************************** current wp# = ',plane.mav.waypoint_current())
+    clrprint('Current WP# = ', plane.mav.waypoint_current(), clr='b')
     # Get the current target waypoint info: target.alt, target.lat, larget.lng
     target = plane.get_current_target()
     print(target)
@@ -1530,7 +1497,7 @@ def main():
     print(target)
 
     # Wait until we approach the target (within 250 m, wait 1000 sec max)
-    plane.wait_location(target, accuracy=250, timeout=1000)
+    plane.wait_location(target, accuracy=50, timeout=1000)
 
 
 if __name__ == "__main__":
