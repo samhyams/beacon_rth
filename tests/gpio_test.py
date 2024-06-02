@@ -14,8 +14,6 @@ def run(master):
             if msg != None:
                 print(msg.to_dict())
 
-
-
 if __name__ == '__main__':
     # Make the connection to MAV
     master = mavutil.mavlink_connection('/dev/ttyS0', baud=57600)
